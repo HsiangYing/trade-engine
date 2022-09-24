@@ -2,8 +2,10 @@ package lo.sharon.tradeengine.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lo.sharon.tradeengine.constant.OrderSide;
+import lo.sharon.tradeengine.constant.OrderStatus;
 import lo.sharon.tradeengine.constant.OrderType;
 import lo.sharon.tradeengine.dto.OrderRequest;
+import lo.sharon.tradeengine.model.Order;
 import lo.sharon.tradeengine.service.OrderService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -13,10 +15,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -28,6 +34,7 @@ public class OrderControllerTest {
     @MockBean
     private OrderService orderService;
 
+    // --- place order test (start) --- //
     @Test
     public void testPlaceOrderWithCorrectUrlAndyRequestBodyResponseOk() throws Exception {
         String ORDER_ID = "1663953147213-0";
@@ -217,4 +224,58 @@ public class OrderControllerTest {
                         .content(String.valueOf(orderRequestJson)))
                 .andExpect(status().isBadRequest());
     }
+    // --- place order by status test (end) --- //
+
+    // --- get orders by status test (start) --- //
+    @Test
+    public void testGetOrderWithCorrectOrderStatusParamResponseOk() throws Exception {
+        String ORDER_ID = "1663953147213-0";
+        Order order = new Order();
+        order.setOrderId(ORDER_ID);
+        order.setSide(OrderSide.BUY);
+        order.setType(OrderType.MARKET);
+        order.setQuantity(20);
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(get("/orders/")
+                        .param("orderStatus", OrderStatus.PENDING_IN_QUEUE.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.stream)]", is(notNullValue())))
+                .andExpect(jsonPath("$[?(@.value)]", is(notNullValue())))
+                .andExpect(jsonPath("$[?(@.id)]", is(notNullValue())));
+    }
+    @Test
+    public void testGetOrderWithoutOrderStatusParamResponse400() throws Exception {
+        String ORDER_ID = "1663953147213-0";
+        Order order = new Order();
+        order.setOrderId(ORDER_ID);
+        order.setSide(OrderSide.BUY);
+        order.setType(OrderType.MARKET);
+        order.setQuantity(20);
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(get("/orders/"))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void testGetOrderWithIncorrectOrderStatusParamResponse400() throws Exception {
+        String ORDER_ID = "1663953147213-0";
+        Order order = new Order();
+        order.setOrderId(ORDER_ID);
+        order.setSide(OrderSide.BUY);
+        order.setType(OrderType.MARKET);
+        order.setQuantity(20);
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(get("/orders/")
+                        .param("orderStatus", "notCorrectStatus"))
+                .andExpect(status().isBadRequest());
+    }
+    // --- get orders test (end) --- //
 }
