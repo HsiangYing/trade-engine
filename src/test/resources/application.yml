@@ -1,0 +1,6 @@
+spring:
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+    deserialization:
+      accept-float-as-int: false
