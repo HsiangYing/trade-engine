@@ -1,0 +1,20 @@
+spring:
+    redis:
+        host: "${SPRING_REDIS_HOST:127.0.0.1}"
+        port: 6379
+        timeout: 300000
+        pool:
+            max-active: 1024
+            max-wait: 50
+            max-idle: 50
+            min-idle: 10
+            testOnBorrow: true
+            testOnReturn: true
+    jackson:
+        mapper:
+            accept-case-insensitive-enums: true
+        deserialization:
+            accept-float-as-int: false
+queues:
+    type: redis
+    pending-order-queue-topic-name: PENDING_ORDER_QUEUE
