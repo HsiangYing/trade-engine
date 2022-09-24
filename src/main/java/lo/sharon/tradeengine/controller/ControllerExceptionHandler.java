@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -21,7 +22,7 @@ public class ControllerExceptionHandler<T extends Exception> {
 
     @ExceptionHandler(Exception.class)
     public void handle(T exception, HttpServletResponse response) {
-        log.error("Error [{}]", exception.getMessage());
+        log.error("Error [{}]", exception.getClass().getCanonicalName(), exception.getMessage());
         handleException(exception, response);
     }
 
@@ -33,7 +34,8 @@ public class ControllerExceptionHandler<T extends Exception> {
             }
             if(exception instanceof TradeEngineException){
                 handleTradeEngineException((TradeEngineException) exception, response);
-            }else if(exception instanceof MethodArgumentTypeMismatchException || exception instanceof MethodArgumentNotValidException || cause.contains("InvalidFormatException")){
+            }else if(exception instanceof MethodArgumentTypeMismatchException || exception instanceof MethodArgumentNotValidException
+                    || exception instanceof MissingServletRequestParameterException ||cause.contains("InvalidFormatException")){
                 TradeEngineExceptionResponse tradeEngineExceptionResponse = new TradeEngineExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), TradeEngineErrorCode.INVALID_REQUEST_PARAMETER);
                 response.setStatus(tradeEngineExceptionResponse.getStatus().value());
                 mapper.writeValue(response.getWriter(), tradeEngineExceptionResponse);

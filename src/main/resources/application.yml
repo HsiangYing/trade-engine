@@ -15,6 +15,8 @@ spring:
             accept-case-insensitive-enums: true
         deserialization:
             accept-float-as-int: false
-queues:
+queue:
     type: redis
-    pending-order-queue-topic-name: PENDING_ORDER_QUEUE
+    pending-order-queue:
+        topic-name: PENDING_ORDER_QUEUE
+        consumer-group-name: PENDING_ORDER_QUEUE_CONSUMER_GROUP
