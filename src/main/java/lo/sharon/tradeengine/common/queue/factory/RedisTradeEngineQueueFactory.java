@@ -1,6 +1,5 @@
 package lo.sharon.tradeengine.common.queue.factory;
 
-import io.lettuce.core.RedisBusyException;
 import lo.sharon.tradeengine.common.queue.TradeEngineQueueProducer;
 import lo.sharon.tradeengine.common.queue.TradeEngineQueueViewer;
 import lo.sharon.tradeengine.common.queue.redis.RedisTradeEngineQueueProducer;
@@ -11,9 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
-import javax.annotation.PostConstruct;
 
 @Component
 @ConditionalOnExpression("'${queue.type}'=='redis'")
@@ -21,17 +18,7 @@ import javax.annotation.PostConstruct;
 public class RedisTradeEngineQueueFactory implements TradeEngineQueueFactory{
 
     @Autowired
-    private RedisTemplate redisTemplate;
-
-    @PostConstruct
-    public void init() {
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
-        this.createConsumerGroupForPendingOrderStream();
-    }
-
+    private RedisTemplate<String, Object>  redisTemplate;
 
     @Value("${queue.pending-order-queue.topic-name}")
     private String pendingOrderStreamKey;
@@ -46,13 +33,19 @@ public class RedisTradeEngineQueueFactory implements TradeEngineQueueFactory{
         return new RedisTradeEngineQueueViewer(pendingOrderStreamKey, redisTemplate);
     }
 
-    private void createConsumerGroupForPendingOrderStream() {
+    @Override
+    public void createConsumerGroup(String streamKey, String consumerGroupName) {
         try {
-            redisTemplate.opsForStream().createGroup(this.pendingOrderStreamKey, ReadOffset.from("0-0") , this.pendingOrderStreamConsumerGroupName);
+            log.info("Creating Consumer Group: {}", consumerGroupName);
+            redisTemplate.opsForStream().createGroup(streamKey, ReadOffset.from("0-0"), consumerGroupName);
         } catch (Exception exception){
-            String cause = exception.getClass().getCanonicalName();
-            if(cause.contains("Consumer Group name already exists"));
-            log.info("Failed to Create consumer group for pending order stream because Consumer Group name already exists");
+            if(exception.getMessage().contains("BUSYGROUP")){
+                log.info("Failed to Create consumer group [{}] for stream [{}], because it already exists", consumerGroupName, streamKey);
+            } else {
+                log.error("Error: {}", exception.getMessage(), exception);
+            }
         }
     }
+
+
 }

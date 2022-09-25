@@ -20,8 +20,8 @@ import javax.validation.constraints.*;
 public class Order {
     private String orderId;
     private OrderSide side;
-    private Integer quantity;
+    private Long quantity;
     private OrderType type;
-    private Integer price;
+    private Long price;
 
 }

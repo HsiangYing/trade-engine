@@ -23,12 +23,12 @@ public class OrderRequest {
 
     @NotNull
     @Min(1)
-    private Integer quantity;
+    private Long quantity;
 
     @NotNull
     private OrderType type;
 
-    private Integer price;
+    private Long price;
 
     @AssertTrue(message = "if orderType is market, don't specify price; if order type is limit, price must be > 0")
     private boolean isPriceValid() {
