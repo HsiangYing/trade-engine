@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ErrorHandler;
 
 @Slf4j
-public class RedisConsumerExceptionHandler implements ErrorHandler {
+public class RedisStreamErrorHandler implements ErrorHandler {
     @Override
     public void handleError(Throwable t) {
-        log.error("[Consume redis stream error] {} ", t.getCause(), t.getMessage());
+        log.error("[REDIS STREAM] {}", t.getMessage());
     }
 }

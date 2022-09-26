@@ -22,7 +22,7 @@ public class RedisTradeEngineQueueProducer<M> implements TradeEngineQueueProduce
                 .in(this.streamKey)
                 .ofObject(message);
         RecordId recordId = redisTemplate.opsForStream().add(record);
-        log.info("[Produce message] stream key: [{}], message: [{}]", this.streamKey, message);
+        log.info("[REDIS STEAM][Produce message] stream key: [{}], message: [{}]", this.streamKey, message);
         return recordId.getValue();
     }
 

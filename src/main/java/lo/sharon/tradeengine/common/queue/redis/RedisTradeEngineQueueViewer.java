@@ -11,12 +11,12 @@ import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
-public class RedisTradeEngineQueueViewer<S> implements TradeEngineQueueViewer<RedisConsumerGroupInfo, S> {
+public class RedisTradeEngineQueueViewer<OrderRequest> implements TradeEngineQueueViewer<RedisConsumerGroupInfo, OrderRequest> {
 
     private final String streamKey;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, OrderRequest> redisTemplate;
 
-    public RedisTradeEngineQueueViewer(String streamKey, RedisTemplate redisTemplate) {
+    public RedisTradeEngineQueueViewer(String streamKey, RedisTemplate<String, OrderRequest> redisTemplate) {
         this.streamKey = streamKey;
         this.redisTemplate = redisTemplate;
     }
@@ -35,12 +35,12 @@ public class RedisTradeEngineQueueViewer<S> implements TradeEngineQueueViewer<Re
             redisConsumerGroupInfo.setLastDeliveredId(consumerGroupInfo.lastDeliveredId());
             redisConsumerGroupsInfo.add(redisConsumerGroupInfo);
         }
-        log.info("[RedisConsumerGroupsInfo] {}", redisConsumerGroupsInfo);
+        log.info("REDIS STREAM][CONSUMER GROUPS INFO] {}", redisConsumerGroupsInfo);
         return redisConsumerGroupsInfo;
     }
-    public List<S> viewPendingInQueueItems(String readFrom, Class<S> targetType){
-        List<S> pendingInQueueOrders = redisTemplate.opsForStream().read(targetType, StreamOffset.create(streamKey, ReadOffset.from(readFrom)));
-        log.info("[PendingInQueueOrders] {}", pendingInQueueOrders);
+    public List<ObjectRecord<String, OrderRequest>> viewPendingInQueueItems(String readFrom, Class<OrderRequest> targetType){
+        List<ObjectRecord<String, OrderRequest>> pendingInQueueOrders = redisTemplate.opsForStream().read(targetType, StreamOffset.create(streamKey, ReadOffset.from(readFrom)));
+        log.info("[REDIS STREAM][UNDELIVERED ITEMS] {}", pendingInQueueOrders);
         return pendingInQueueOrders;
     }
 }

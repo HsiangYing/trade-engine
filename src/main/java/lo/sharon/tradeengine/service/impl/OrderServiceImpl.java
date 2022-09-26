@@ -50,41 +50,46 @@ public class OrderServiceImpl implements OrderService {
         Long priceToBeMatch = orderType.equals(OrderType.MARKET) ? currentPriceDao.getCurrentPrice() : orderFromQueue.getPrice();
         OrderSide orderFromOrderBookOrderSide = orderFromQueueOrderSide.equals(OrderSide.SELL) ? OrderSide.BUY : OrderSide.SELL;
 
+
         // INITIAL
-        //orderFromQueue 剩餘委託數量
         Long restOfOrderFromQueueQty = orderFromQueue.getQuantity();
-        // OrderBook 中是否有反方市價單
-        Optional<Order> marketOrderFromOrderBook = orderBookDao.getOrderFromOrderBook(orderFromOrderBookOrderSide, true, null);
-        boolean isMarketOrderInOrderBook = marketOrderFromOrderBook.orElse(null) != null;
+        log.info("[MATCH ORDER][INIT] orderFromQueue 委託數量: {}, 委託價格: {}", restOfOrderFromQueueQty, priceToBeMatch);
+        boolean isMarketOrderInOrderBook = orderBookDao.getSize(orderFromOrderBookOrderSide, true, null) > 0 ? true : false;
+        log.info("[MATCH ORDER] is market order in orderBook: {}", isMarketOrderInOrderBook);
 
-        while(isMarketOrderInOrderBook && restOfOrderFromQueueQty > 0){ //1
+        while(isMarketOrderInOrderBook && restOfOrderFromQueueQty > 0){
+            Optional<Order> marketOrderFromOrderBook = orderBookDao.popFromHead(orderFromOrderBookOrderSide, true, null);
             restOfOrderFromQueueQty = doExchange(orderFromQueue, marketOrderFromOrderBook.get(), priceToBeMatch);
-            orderFromQueue.setQuantity(restOfOrderFromQueueQty);
-            marketOrderFromOrderBook = orderBookDao.getOrderFromOrderBook(orderFromOrderBookOrderSide, true, null);
-            isMarketOrderInOrderBook = marketOrderFromOrderBook.orElse(null) != null;
-        }
+            log.info("[MATCH ORDER] rest of order from queue after exchange: {}", restOfOrderFromQueueQty);
 
+            orderFromQueue.setQuantity(restOfOrderFromQueueQty);
+            isMarketOrderInOrderBook = orderBookDao.getSize(orderFromOrderBookOrderSide, true, null) > 0 ? true : false;
+        }
+        log.info("[MATCH ORDER] is market order in orderBook: {}", isMarketOrderInOrderBook);
+        log.info("[MATCH ORDER] rest of order from queue after compare with market order: {}", restOfOrderFromQueueQty);
         if (restOfOrderFromQueueQty == 0) {
             return;
         }
 
         // INITIAL
-        // OrderBook中是否有反方限價單
-        Optional<Order> limitOrderFromOrderBook = orderBookDao.getOrderFromOrderBook(orderFromOrderBookOrderSide, false, priceToBeMatch);
-        boolean isLimitOrderInOrderBook = limitOrderFromOrderBook.orElse(null) != null;
+        boolean isLimitOrderInOrderBook = orderBookDao.getSize(orderFromOrderBookOrderSide, false, priceToBeMatch) > 0 ? true : false;
+        log.info("[MATCH ORDER] is limit order in orderBook] {}", isLimitOrderInOrderBook);
 
-        while(isLimitOrderInOrderBook && restOfOrderFromQueueQty > 0){ //2+3
+        while(isLimitOrderInOrderBook && restOfOrderFromQueueQty > 0){
+            Optional<Order> limitOrderFromOrderBook = orderBookDao.popFromHead(orderFromOrderBookOrderSide, false, priceToBeMatch);
             restOfOrderFromQueueQty = doExchange(orderFromQueue, limitOrderFromOrderBook.get(), priceToBeMatch);
+            log.info("[MATCH ORDER] rest of order from queue after exchange: {}", restOfOrderFromQueueQty);
+
             orderFromQueue.setQuantity(restOfOrderFromQueueQty);
-            limitOrderFromOrderBook = orderBookDao.getOrderFromOrderBook(OrderSide.BUY, false, priceToBeMatch);
-            isLimitOrderInOrderBook = limitOrderFromOrderBook.orElse(null) != null;
-        }
-        if(restOfOrderFromQueueQty > 0){
-            //order from queue 剩下的單放到 OrderBook 中
-            orderFromQueue.setQuantity(restOfOrderFromQueueQty);
-            orderBookDao.pushOrderToOrderBookTail(orderFromQueue);
+            isLimitOrderInOrderBook = orderBookDao.getSize(orderFromOrderBookOrderSide, false, priceToBeMatch) > 0 ? true : false;
         }
 
+        log.info("[MATCH ORDER] is limit order in orderBook {}", isLimitOrderInOrderBook);
+        log.info("[MATCH ORDER] rest of order from queue after compare with limit order: {}", restOfOrderFromQueueQty);
+        if(restOfOrderFromQueueQty > 0){
+            orderFromQueue.setQuantity(restOfOrderFromQueueQty);
+            orderBookDao.pushToTail(orderFromQueue);
+        }
     }
     private List<Order> getPendingInQueueOrders(){
         // getLastDeliveredId
@@ -97,19 +102,11 @@ public class OrderServiceImpl implements OrderService {
         return pendingInQueueOrders;
     }
 
-
-    /**
-     *
-     * @param orderFromQueue
-     * @param orderFromOrderBook
-     * @param matchPrice 成交價格
-     * @return orderFromQueue 剩餘的委託量
-     */
     private Long doExchange(Order orderFromQueue, Order orderFromOrderBook, Long matchPrice) {
         Long orderFromQueueQty = orderFromQueue.getQuantity();
         Long orderFromOrderBookQty = orderFromOrderBook.getQuantity();
         Long exchangeQty = orderFromQueueQty-orderFromOrderBookQty >0 ? orderFromOrderBookQty : orderFromQueueQty;
-        log.info("[Exchange] matchPrice: {}, exchangeQty: {},  order from queue:[{}], order from order book:[{}]", matchPrice, exchangeQty, orderFromQueue, orderFromOrderBook);
+        log.info("[MATCH ORDER][EXCHANGE] matchPrice: {}, exchangeQty: {},  order from queue:[{}], order from order book:[{}]", matchPrice, exchangeQty, orderFromQueue, orderFromOrderBook);
         currentPriceDao.setCurrentPrice(matchPrice.toString());
         //todo: save to db 注意數量
         Long restOfOrderFromQueue = null;
@@ -118,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if(orderFromOrderBookQty > orderFromQueueQty) {
             orderFromOrderBook.setQuantity(orderFromOrderBookQty - exchangeQty);
-            orderBookDao.pushOrderToOrderBookHead(orderFromOrderBook);
+            orderBookDao.pushToHead(orderFromOrderBook);
             restOfOrderFromQueue = 0L;
         }
         if(orderFromOrderBookQty == orderFromQueueQty){

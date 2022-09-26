@@ -8,8 +8,10 @@ import lo.sharon.tradeengine.model.Order;
 import java.util.Optional;
 
 public interface OrderBookDao {
-    Optional<Order> getOrderFromOrderBook(OrderSide orderSide, boolean isMarketOrder, Long price);
-    Optional<Long> pushOrderToOrderBookHead(Order order);
-    Optional<Long> pushOrderToOrderBookTail(Order order);
+
+    Long getSize(OrderSide orderSide, boolean isMarketOrder, Long price);
+    Optional<Order> popFromHead(OrderSide orderSide, boolean isMarketOrder, Long price);
+    Optional<Long> pushToHead(Order order);
+    Optional<Long> pushToTail(Order order);
 
 }
