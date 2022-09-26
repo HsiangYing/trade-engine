@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lo.sharon.tradeengine.constant.OrderSide;
 import lo.sharon.tradeengine.constant.OrderType;
+import lo.sharon.tradeengine.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,12 +24,12 @@ public class OrderRequest {
 
     @NotNull
     @Min(1)
-    private Integer quantity;
+    private Long quantity;
 
     @NotNull
     private OrderType type;
 
-    private Integer price;
+    private Long price;
 
     @AssertTrue(message = "if orderType is market, don't specify price; if order type is limit, price must be > 0")
     private boolean isPriceValid() {
@@ -41,5 +42,14 @@ public class OrderRequest {
                 return true;
         }
         return false;
+    }
+
+    public Order transformToOrder(){
+        Order order = new Order();
+        order.setQuantity(this.quantity);
+        order.setPrice(this.price);
+        order.setSide(this.side);
+        order.setType(this.type);
+        return order;
     }
 }

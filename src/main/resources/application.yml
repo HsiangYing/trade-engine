@@ -2,19 +2,27 @@ spring:
     redis:
         host: "${SPRING_REDIS_HOST:127.0.0.1}"
         port: 6379
-        timeout: 300000
-        pool:
-            max-active: 1024
-            max-wait: 50
-            max-idle: 50
-            min-idle: 10
-            testOnBorrow: true
-            testOnReturn: true
+        timeout: 300000 #連線超時毫秒 5 mins
+        lettuces:
+            pool:
+                max-active: 1024 #線池最大連線數（使用負值表示沒有限制）
+                max-wait: 50 #連線池最大等待時間（使用負值表示沒有限制）
+                max-idle: 50 #連線池中的最大空閒連線
+                min-idle: 10 #連線池中的最小空閒連線
+                testOnBorrow: true
+                testOnReturn: true
     jackson:
         mapper:
             accept-case-insensitive-enums: true
         deserialization:
             accept-float-as-int: false
-queues:
+queue:
     type: redis
-    pending-order-queue-topic-name: PENDING_ORDER_QUEUE
+    pending-order-queue:
+        topic-name: PENDING_ORDER_QUEUE
+        consumer-group-name: PENDING_ORDER_QUEUE_CONSUMER_GROUP
+        consumer-name: PENDING_ORDER_QUEUE_CONSUMER
+cache:
+    type: redis
+    current-price-key: CURRENT_PRICE
+    default-current-price: 10

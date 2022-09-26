@@ -8,9 +8,9 @@ import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Slf4j
-public class RedisTradeEngineQueueProducer<M extends Object> implements TradeEngineQueueProducer<M> {
+public class RedisTradeEngineQueueProducer<M> implements TradeEngineQueueProducer<M> {
     private final String streamKey;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object>  redisTemplate;
 
     public RedisTradeEngineQueueProducer(String streamKey, RedisTemplate redisTemplate) {
         this.streamKey = streamKey;
@@ -22,7 +22,7 @@ public class RedisTradeEngineQueueProducer<M extends Object> implements TradeEng
                 .in(this.streamKey)
                 .ofObject(message);
         RecordId recordId = redisTemplate.opsForStream().add(record);
-        log.info("Add message: " + message + " into redis stream key: " + this.streamKey);
+        log.info("[REDIS STEAM][Produce message] stream key: [{}], message: [{}]", this.streamKey, message);
         return recordId.getValue();
     }
 
