@@ -7,6 +7,4 @@ public interface TradeEngineQueueFactory {
 
     TradeEngineQueueProducer createPendingOrderQueueProducer();
     TradeEngineQueueViewer createPendingOrderQueueViewer();
-
-    void createConsumerGroup(String streamKey, String consumerGroupName);
 }

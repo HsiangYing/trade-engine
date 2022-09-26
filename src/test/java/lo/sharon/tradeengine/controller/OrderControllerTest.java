@@ -41,7 +41,7 @@ public class OrderControllerTest {
         OrderRequest orderReq = new OrderRequest();
         orderReq.setSide(OrderSide.BUY);
         orderReq.setType(OrderType.MARKET);
-        orderReq.setQuantity(20L);
+        orderReq.setQuantity(20);
         Mockito.when(orderService.putOrderToPendingOrderQueue(orderReq)).thenReturn(ORDER_ID);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/orders/")
@@ -54,8 +54,8 @@ public class OrderControllerTest {
     public void testPlaceOrderWithCorrectUrlAndyNotSpecifySideResponse400() throws Exception {
         Map orderRequest = new HashMap();
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 20L);
-        orderRequest.put("price", 100L);
+        orderRequest.put("quantity", 20);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         mockMvc.perform(post("/orders/")
                         .contentType(APPLICATION_JSON)
@@ -67,8 +67,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "incorrectSide");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 20L);
-        orderRequest.put("price", 100L);
+        orderRequest.put("quantity", 20);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         mockMvc.perform(post("/orders/")
                         .contentType(APPLICATION_JSON)
@@ -80,7 +80,7 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("price", 100L);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         mockMvc.perform(post("/orders/")
                         .contentType(APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class OrderControllerTest {
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
         orderRequest.put("quantity", -20);
-        orderRequest.put("price", 100L);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         mockMvc.perform(post("/orders/")
                         .contentType(APPLICATION_JSON)
@@ -106,7 +106,7 @@ public class OrderControllerTest {
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
         orderRequest.put("quantity", 1.6f);
-        orderRequest.put("price", 100L);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -119,8 +119,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 0L);
-        orderRequest.put("price", 100L);
+        orderRequest.put("quantity", 0);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -132,8 +132,8 @@ public class OrderControllerTest {
     public void testPlaceOrderWithCorrectUrlAndNotSpecifyTypeResponse400() throws Exception {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
-        orderRequest.put("quantity", 10L);
-        orderRequest.put("price", 100L);
+        orderRequest.put("quantity", 10);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -146,8 +146,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "BUYANDSELL");
-        orderRequest.put("quantity", 10L);
-        orderRequest.put("price", 100L);
+        orderRequest.put("quantity", 10);
+        orderRequest.put("price", 100);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -160,7 +160,7 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 10L);
+        orderRequest.put("quantity", 10);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -173,8 +173,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 10L);
-        orderRequest.put("price", 0L);
+        orderRequest.put("quantity", 10);
+        orderRequest.put("price", 0);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -187,8 +187,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 10L);
-        orderRequest.put("price", -5L);
+        orderRequest.put("quantity", 10);
+        orderRequest.put("price", -5);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -201,7 +201,7 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "BUY");
         orderRequest.put("type", "LIMIT");
-        orderRequest.put("quantity", 10L);
+        orderRequest.put("quantity", 10);
         orderRequest.put("price", 5.5f);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
@@ -215,8 +215,8 @@ public class OrderControllerTest {
         Map orderRequest = new HashMap();
         orderRequest.put("side", "SELL");
         orderRequest.put("type", "MARKET");
-        orderRequest.put("quantity", 10L);
-        orderRequest.put("price", 20L);
+        orderRequest.put("quantity", 10);
+        orderRequest.put("price", 20);
         JSONObject orderRequestJson = new JSONObject(orderRequest);
         System.out.println(String.valueOf(orderRequestJson));
         mockMvc.perform(post("/orders/")
@@ -234,7 +234,7 @@ public class OrderControllerTest {
         order.setOrderId(ORDER_ID);
         order.setSide(OrderSide.BUY);
         order.setType(OrderType.MARKET);
-        order.setQuantity(20L);
+        order.setQuantity(20);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
@@ -253,7 +253,7 @@ public class OrderControllerTest {
         order.setOrderId(ORDER_ID);
         order.setSide(OrderSide.BUY);
         order.setType(OrderType.MARKET);
-        order.setQuantity(20L);
+        order.setQuantity(20);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
@@ -268,7 +268,7 @@ public class OrderControllerTest {
         order.setOrderId(ORDER_ID);
         order.setSide(OrderSide.BUY);
         order.setType(OrderType.MARKET);
-        order.setQuantity(20L);
+        order.setQuantity(20);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);

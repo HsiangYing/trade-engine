@@ -7,7 +7,6 @@ import lo.sharon.tradeengine.model.Order;
 import java.util.List;
 
 public interface OrderService {
-    String putOrderToPendingOrderQueue(OrderRequest orderRequest);
-    List<Order> getOrdersByStatus(OrderStatus orderStatus);
-    void matchOrder(Order order);
+    public String putOrderToPendingOrderQueue(OrderRequest orderRequest);
+    public List<Order> getOrdersByStatus(OrderStatus orderStatus);
 }

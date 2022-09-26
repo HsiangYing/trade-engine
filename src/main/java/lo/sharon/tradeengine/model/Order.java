@@ -9,8 +9,6 @@ import lo.sharon.tradeengine.constant.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import reactor.util.annotation.Nullable;
-
 import javax.validation.constraints.*;
 
 @Data
@@ -22,9 +20,8 @@ import javax.validation.constraints.*;
 public class Order {
     private String orderId;
     private OrderSide side;
-    private Long quantity;
+    private Integer quantity;
     private OrderType type;
-    @Nullable
-    private Long price;
+    private Integer price;
 
 }
