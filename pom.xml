@@ -17,7 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<trade-engine.version>0.2.0</trade-engine.version>
+		<trade-engine.version>0.3.0</trade-engine.version>
 	</properties>
 	<dependencies>
 		<dependency>
