@@ -4,15 +4,29 @@ services:
     build: ./
     ports:
       - 8080:8080
+    command: bash -c 'while !</dev/tcp/postgreSQL/5432; do sleep 1; done; sh start-trade-engine.sh'
     environment:
       - SPRING_REDIS_HOST=redis
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgreSQL:5432/trade-engine
     depends_on:
       - redis
+      - postgreSQL
   redis:
     restart: always
     image: redis:7.0
     volumes:
-      - ./data/redis-data:/data
+      - ./data/trade-engine/redis:/data
     ports:
       - 6379:6379
-
+  postgreSQL:
+    image: postgres:14.5
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ../data/trade-engine/postgres:/var/lib/postgresql/data
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=trade-engine

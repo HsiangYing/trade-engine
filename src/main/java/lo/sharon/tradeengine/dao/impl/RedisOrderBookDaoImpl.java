@@ -50,8 +50,8 @@ public class RedisOrderBookDaoImpl implements OrderBookDao {
         String orderBookKey = generateOrderBookKey(order.getSide(), isMarketOrder, order.getPrice());
         Long countInList = null;
         try{
-            log.info("[REDIS LIST][left push] key: {}, order: {}, result: {}", orderBookKey, order, countInList);
             countInList = redisOrderTemplate.opsForList().leftPush(orderBookKey, order);
+            log.info("[REDIS LIST][left push] key: {}, order: {}, result: {}", orderBookKey, order, countInList);
         }catch(Exception exception){
             log.error("[REDIS LIST][left push] key: {}, order: {}, error: {},", orderBookKey, order, exception.getMessage());
         }
@@ -65,7 +65,9 @@ public class RedisOrderBookDaoImpl implements OrderBookDao {
         Long countInList = null;
         try {
             countInList = redisOrderTemplate.opsForList().rightPush(orderBookKey, order);
-         }catch (Exception exception){
+            log.info("[REDIS LIST][left push] key: {}, order: {}, result: {}", orderBookKey, order, countInList);
+
+        }catch (Exception exception){
             log.error("[REDIS LIST][right push] key: {}, order: {}, error: {},", orderBookKey, order, exception.getMessage());
         }
         return Optional.ofNullable(countInList);
