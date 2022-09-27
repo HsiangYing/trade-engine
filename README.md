@@ -10,7 +10,7 @@ Your system will have multiple traders executing orders at the same time.
 
 ## 系統架構
 [如果看不清楚可以點這個連結](https://whimsical.com/trade-engine-system-architechure-55jZhRdv8FmJJ3oqFucy82)
-![image](https://user-images.githubusercontent.com/104806006/192515605-4c13f177-7478-4160-9682-583c96af10f2.png)
+![image](https://user-images.githubusercontent.com/104806006/192540996-9aa56d9c-5cc1-4f46-8354-9a9b0878be99.png)
 
 ## 系統設計說明
 
@@ -32,6 +32,9 @@ Your system will have multiple traders executing orders at the same time.
 1. 從 **redis stream** 消費委託單, 並比對該委託單與**委託簿**中是否有可以撮合的委託單
 2. 撮合邏輯
    - 規則: 市價單優先於限價單
+   - [這裡可以看比較大一點的圖](https://whimsical.com/trade-engine-28temnR9yP5bnVryCoGtWS)
+   ![image](https://user-images.githubusercontent.com/104806006/192541403-6dd4ddc9-b1c1-4d05-ae4f-72bd446b8d7f.png)
+
 3. 如何達到 Thread safe?
    - 使用 **single thread** 消費(監聽)**redis stream**
    - 指定負責撮合的 method 為 **synchronized**, 也就是只有一個thread 可以執行該method
