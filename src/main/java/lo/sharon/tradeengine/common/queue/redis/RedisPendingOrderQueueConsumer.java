@@ -1,7 +1,5 @@
 package lo.sharon.tradeengine.common.queue.redis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lo.sharon.tradeengine.dto.OrderRequest;
 import lo.sharon.tradeengine.model.Order;
 import lo.sharon.tradeengine.service.OrderService;
@@ -10,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,10 +38,7 @@ public class RedisPendingOrderQueueConsumer implements StreamListener<String, Ob
         order.setOrderId(id.getValue());
         log.info("[REDIS STREAM][On Message] group:[{}] consumerName:[{}] stream:[{}] id:[{}] value:[{}]",
                 consumerGroupName, consumerName, streamKey, id, order);
-        //match order
-
         orderService.matchOrder(order);
-
         Long ackCount = redisTemplate.opsForStream().acknowledge(consumerGroupName, objectRecord);
         log.info("[REDIS STREAM][Ack Message] total ack count:[{}] group:[{}] consumerName:[{}] stream:[{}] id:[{}] value:[{}]",
                 ackCount, consumerGroupName, consumerName, streamKey, id, order);

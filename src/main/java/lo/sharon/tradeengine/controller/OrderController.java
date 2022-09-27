@@ -10,11 +10,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @Validated
 public class OrderController {
-
     @Autowired
     private OrderService orderService;
 
@@ -25,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping(value = "/orders")
-    public List<Order> getOrdersByStatus(@RequestParam @Valid OrderStatus orderStatus) {
-        List<Order> orders = orderService.getOrdersByStatus(orderStatus);
+    public Map<String, List<Order>> getOrdersByStatus(@RequestParam @Valid OrderStatus orderStatus) {
+        Map<String, List<Order>> orders = orderService.getOrdersByStatus(orderStatus);
         return orders;
     }
 }

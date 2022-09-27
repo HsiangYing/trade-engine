@@ -5,7 +5,10 @@ import lo.sharon.tradeengine.constant.OrderSide;
 import lo.sharon.tradeengine.constant.OrderType;
 import lo.sharon.tradeengine.model.Order;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface OrderBookDao {
 
@@ -13,5 +16,6 @@ public interface OrderBookDao {
     Optional<Order> popFromHead(OrderSide orderSide, boolean isMarketOrder, Long price);
     Optional<Long> pushToHead(Order order);
     Optional<Long> pushToTail(Order order);
-
+    Map<String, List<Order>> getAll();
+    Map<String, List<Order>> getAllByKeys(Set<String> keys);
 }

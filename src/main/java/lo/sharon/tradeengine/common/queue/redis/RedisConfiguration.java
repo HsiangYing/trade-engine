@@ -2,7 +2,6 @@ package lo.sharon.tradeengine.common.queue.redis;
 
 import lo.sharon.tradeengine.dto.OrderRequest;
 import lo.sharon.tradeengine.model.Order;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
