@@ -1,4 +1,4 @@
-package lo.sharon.tradeengine.controller;
+package lo.sharon.tradeengine.controller.errorHandler;
 
 import lo.sharon.tradeengine.common.exception.TradeEngineErrorCode;
 import lombok.Getter;
