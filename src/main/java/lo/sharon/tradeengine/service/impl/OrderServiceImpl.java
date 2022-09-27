@@ -15,17 +15,13 @@ import lo.sharon.tradeengine.model.Order;
 import lo.sharon.tradeengine.model.RedisConsumerGroupInfo;
 import lo.sharon.tradeengine.model.Transaction;
 import lo.sharon.tradeengine.service.OrderService;
+import lo.sharon.tradeengine.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,7 +32,8 @@ public class OrderServiceImpl implements OrderService {
     private TradeEngineQueueFactory tradeEngineQueueFactory;
     @Autowired
     private OrderBookDao orderBookDao;
-
+    @Autowired
+    private TransactionService transactionService;
     @Autowired
     private CurrentPriceDao currentPriceDao;
 
@@ -58,9 +55,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrdersByStatus(OrderStatus orderStatus) {
-        if(orderStatus.name().equals(OrderStatus.PENDING_IN_QUEUE.name())){
+    public Map<String, List<Order>> getOrdersByStatus(OrderStatus orderStatus) {
+        if(orderStatus.equals(OrderStatus.PENDING_IN_QUEUE)){
             return this.getPendingInQueueOrders();
+        }
+        if(orderStatus.equals(OrderStatus.PENDING_IN_ORDER_BOOK)){
+            return this.getPendingInOrderBookOrders();
+        }
+        if(orderStatus.equals(OrderStatus.FILLED)){
+            List<Transaction> transactions = transactionService.getAllTransactions();
+            Iterator<Transaction> transactionsIterator = transactions.iterator();
+            List<Order> filledOrderList = new ArrayList<>();
+            while(transactionsIterator.hasNext()){
+                Transaction transaction = transactionsIterator.next();
+                Order filledBuyOrder = new Order();
+                filledBuyOrder.setOrderId(transaction.getBuyOrderId());
+                filledBuyOrder.setQuantity(transaction.getQuantity());
+                filledBuyOrder.setPrice(transaction.getPrice());
+                filledOrderList.add(filledBuyOrder);
+                Order filledSellOrder = new Order();
+                filledSellOrder.setOrderId(transaction.getSellOrderId());
+                filledSellOrder.setQuantity(transaction.getQuantity());
+                filledSellOrder.setPrice(transaction.getPrice());
+                filledOrderList.add(filledSellOrder);
+            }
+            Map<String, List<Order>> filledOrdersMap = new HashMap<>();
+            filledOrdersMap.put(OrderStatus.FILLED.name(), filledOrderList);
+            return filledOrdersMap;
         }
         return null;
     }
@@ -112,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
             orderBookDao.pushToTail(orderFromQueue);
         }
     }
-    private List<Order> getPendingInQueueOrders(){
+    private Map<String, List<Order>> getPendingInQueueOrders(){
         // getLastDeliveredId
         TradeEngineQueueViewer tradeEngineQueueViewer = tradeEngineQueueFactory.createPendingOrderQueueViewer();
         List<RedisConsumerGroupInfo> redisConsumerGroupsInfo = tradeEngineQueueViewer.viewConsumerGroupInfo();
@@ -120,7 +141,14 @@ public class OrderServiceImpl implements OrderService {
 
         // get orders behind lastDeliveredId
         List<Order> pendingInQueueOrders = tradeEngineQueueViewer.viewPendingInQueueItems(lastConsumedOrderId, Order.class);
-        return pendingInQueueOrders;
+        Map<String, List<Order>> pendingInQueueOrdersMap = new HashMap<>();
+        pendingInQueueOrdersMap.put(OrderStatus.PENDING_IN_QUEUE.name(), pendingInQueueOrders);
+        return pendingInQueueOrdersMap;
+    }
+
+    private Map<String, List<Order>> getPendingInOrderBookOrders(){
+        Map<String, List<Order>> ordersInorderBook = orderBookDao.getAll();
+        return ordersInorderBook;
     }
 
     private Long doExchange(Order orderFromQueue, Order orderFromOrderBook, Long matchPrice) {
