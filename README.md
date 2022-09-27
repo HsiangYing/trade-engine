@@ -75,6 +75,7 @@ Your system will have multiple traders executing orders at the same time.
 2. DB 或許可以換成 cassandra, 因為寫入可能較快 （by appending)
 3. 各種參數都需要再經過調整, 以符合大流量需求
 4. 尚未確認 redis persistence 機制, 須注意委託單因 redis crash 而消失的可能性
+5. 撮合成功後, 可以將資訊拋到 kafka pool 存放, 再消費處理之  
 
 
 
