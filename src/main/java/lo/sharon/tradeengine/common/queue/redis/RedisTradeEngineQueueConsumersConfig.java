@@ -41,11 +41,11 @@ public class RedisTradeEngineQueueConsumersConfig {
 
     @Bean
     public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, ?> pendingOrderQueueListenerContainerOptions(){
-        ExecutorService cacheThreadExecutor = Executors.newCachedThreadPool();
+        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
         return StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                 .builder()
                 .batchSize(10)
-                .executor(cacheThreadExecutor)
+                .executor(singleThreadExecutor)
                 .pollTimeout(Duration.ofSeconds(299))
                 .objectMapper(new ObjectHashMapper())
                 .targetType(OrderRequest.class)
