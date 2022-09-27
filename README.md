@@ -21,7 +21,8 @@ Your system will have multiple traders executing orders at the same time.
 
 ## 系統架構
 [如果看不清楚可以點這個連結](https://whimsical.com/trade-engine-system-architechure-55jZhRdv8FmJJ3oqFucy82)
-![image](https://user-images.githubusercontent.com/104806006/192566392-6d358dc0-dc50-432e-9ace-87b85c960881.png)
+![image](https://user-images.githubusercontent.com/104806006/192568924-06b373f5-bf82-4e62-8009-7708a77aaea0.png)
+
 
 
 ## 系統設計說明
