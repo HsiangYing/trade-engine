@@ -21,7 +21,8 @@ Your system will have multiple traders executing orders at the same time.
 
 ## 系統架構
 [如果看不清楚可以點這個連結](https://whimsical.com/trade-engine-system-architechure-55jZhRdv8FmJJ3oqFucy82)
-![image](https://user-images.githubusercontent.com/104806006/192540996-9aa56d9c-5cc1-4f46-8354-9a9b0878be99.png)
+![image](https://user-images.githubusercontent.com/104806006/192566392-6d358dc0-dc50-432e-9ace-87b85c960881.png)
+
 
 ## 系統設計說明
 
@@ -56,8 +57,9 @@ Your system will have multiple traders executing orders at the same time.
 ### 儲存撮合成功的委託單為一筆交易至DB
 ![image](https://user-images.githubusercontent.com/104806006/192539110-550430f8-5ca9-425a-95b2-c2525ff6e15c.png)
 
-1. 開一個 ThreadPool 負責將交易單儲存至DB, 不與上述撮合引擎使用同一個 thread, 以提升效率
-2. issue: https://github.com/HsiangYing/trade-engine/issues/9
+1. 開一個 ThreadPool 負責將交易單儲存至 DB, 不與上述撮合引擎使用同一個 thread, 以提升效率
+2. 使用 ListenableFuture + callback 的方式將結果透過log 呈現, 不必等候 DB 儲存結果
+3. issue: https://github.com/HsiangYing/trade-engine/issues/9
 
 ## 啟動方式
 - 環境要求
