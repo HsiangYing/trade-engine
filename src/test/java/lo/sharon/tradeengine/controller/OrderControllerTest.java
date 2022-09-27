@@ -237,7 +237,9 @@ public class OrderControllerTest {
         order.setQuantity(20L);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
-        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        Map<String, List<Order>> orderListMap = new HashMap<>();
+        orderListMap.put(OrderStatus.PENDING_IN_QUEUE.name(), orderList);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderListMap);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(get("/orders/")
                         .param("orderStatus", OrderStatus.PENDING_IN_QUEUE.name()))
@@ -256,7 +258,9 @@ public class OrderControllerTest {
         order.setQuantity(20L);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
-        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        Map<String, List<Order>> orderListMap = new HashMap<>();
+        orderListMap.put(OrderStatus.PENDING_IN_QUEUE.name(), orderList);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderListMap);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(get("/orders/"))
                 .andExpect(status().isBadRequest());
@@ -271,7 +275,9 @@ public class OrderControllerTest {
         order.setQuantity(20L);
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
-        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderList);
+        Map<String, List<Order>> orderListMap = new HashMap<>();
+        orderListMap.put(OrderStatus.PENDING_IN_QUEUE.name(), orderList);
+        Mockito.when(orderService.getOrdersByStatus(OrderStatus.PENDING_IN_QUEUE)).thenReturn(orderListMap);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(get("/orders/")
                         .param("orderStatus", "notCorrectStatus"))

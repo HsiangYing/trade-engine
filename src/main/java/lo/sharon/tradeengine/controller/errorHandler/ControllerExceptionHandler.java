@@ -1,9 +1,8 @@
-package lo.sharon.tradeengine.controller;
+package lo.sharon.tradeengine.controller.errorHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lo.sharon.tradeengine.common.exception.TradeEngineErrorCode;
 import lo.sharon.tradeengine.common.exception.TradeEngineException;
-import lo.sharon.tradeengine.controller.TradeEngineExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

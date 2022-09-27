@@ -1,7 +1,5 @@
 package lo.sharon.tradeengine.dao.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lo.sharon.tradeengine.constant.OrderSide;
 import lo.sharon.tradeengine.constant.OrderType;
 import lo.sharon.tradeengine.dao.OrderBookDao;
@@ -10,12 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -24,7 +19,9 @@ public class RedisOrderBookDaoImpl implements OrderBookDao {
     @Autowired
     @Qualifier("redisOrderTemplate")
     RedisTemplate<String, Order> redisOrderTemplate;
-
+    @Autowired
+    @Qualifier("redisStringTemplate")
+    RedisTemplate<String, String> redisStringTemplate;
     @Override
     public Long getSize(OrderSide orderSide, boolean isMarketOrder, Long price) {
         String orderBookKey = generateOrderBookKey(orderSide, isMarketOrder, price);
@@ -72,6 +69,33 @@ public class RedisOrderBookDaoImpl implements OrderBookDao {
         }
         return Optional.ofNullable(countInList);
 
+    }
+
+    @Override
+    public Map<String, List<Order>> getAll() {
+        Map<String, List<Order>> ordersInOrderBook = new HashMap<>();
+
+        Set<String> buyKeys = redisStringTemplate.keys("BUY*");
+        Map<String, List<Order>> ordersInOrderBookByBuyKey = getAllByKeys(buyKeys);
+
+        Set<String> sellKeys = redisStringTemplate.keys("SELL*");
+        Map<String, List<Order>> ordersInOrderBookBySellKey = getAllByKeys(sellKeys);
+
+        ordersInOrderBook.putAll(ordersInOrderBookByBuyKey);
+        ordersInOrderBook.putAll(ordersInOrderBookBySellKey);
+
+        return ordersInOrderBook;
+    }
+
+    public Map<String, List<Order>> getAllByKeys (Set<String> keys) {
+        Map<String, List<Order>> ordersInOrderBookBuyKey = new HashMap<>();
+        Iterator<String> keysIterator = keys.iterator();
+        while(keysIterator.hasNext()){
+            String key = keysIterator.next();
+            List<Order> orders = redisOrderTemplate.opsForList().range(key,0L, 01L);
+            ordersInOrderBookBuyKey.put(key, orders);
+        }
+        return ordersInOrderBookBuyKey;
     }
 
     private String generateOrderBookKey(OrderSide orderSide, boolean isMarketOrder, Long price){

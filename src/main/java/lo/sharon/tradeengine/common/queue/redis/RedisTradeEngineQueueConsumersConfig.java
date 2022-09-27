@@ -1,5 +1,6 @@
 package lo.sharon.tradeengine.common.queue.redis;
 
+import lo.sharon.tradeengine.common.queue.errorHandler.RedisStreamErrorHandler;
 import lo.sharon.tradeengine.common.queue.factory.RedisTradeEngineQueueFactory;
 import lo.sharon.tradeengine.dto.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
