@@ -7,7 +7,8 @@
     + [儲存撮合成功的委託單為一筆交易至DB](#儲存撮合成功的委託單為一筆交易至db)
   * [啟動方式](#啟動方式)
   * [相關文件](#相關文件)
-
+  * [Future Work](#future-work)
+  
 # trade-engine
 
 ## 需求說明
@@ -68,6 +69,13 @@ Your system will have multiple traders executing orders at the same time.
 ## 相關文件
 - API 文件：
   - 若Application啟動成功, 則可以至 swagger 使用API `http://yourDockerHost:8080/swagger-ui/index.html`
+
+## Future Work
+1. 補足重要功能的unit test, e.g.: 撮合引擎, 目前只有在local透過整合測試確認邏輯
+2. DB 或許可以換成 cassandra, 因為寫入可能較快 （by appending)
+3. 各種參數都需要再經過調整, 以符合大流量需求
+4. 尚未確認 redis persistence 機制, 須注意委託單因 redis crash 而消失的可能性
+
 
 
 
