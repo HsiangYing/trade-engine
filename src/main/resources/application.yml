@@ -16,6 +16,16 @@ spring:
             accept-case-insensitive-enums: true
         deserialization:
             accept-float-as-int: false
+    datasource:
+        url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://127.0.0.1:5432/trade-engine}"
+        username: postgres
+        password: postgres
+    jpa:
+        hibernate.ddl-auto: update
+        show-sql: false
+        properties.hibernate:
+            format_sql: true
+            dialect: org.hibernate.dialect.PostgreSQLDialect
 queue:
     type: redis
     pending-order-queue:
@@ -26,3 +36,4 @@ cache:
     type: redis
     current-price-key: CURRENT_PRICE
     default-current-price: 10
+

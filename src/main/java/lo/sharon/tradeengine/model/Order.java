@@ -9,9 +9,7 @@ import lo.sharon.tradeengine.constant.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import reactor.util.annotation.Nullable;
 
-import javax.validation.constraints.*;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +22,6 @@ public class Order {
     private OrderSide side;
     private Long quantity;
     private OrderType type;
-    @Nullable
     private Long price;
 
 }
