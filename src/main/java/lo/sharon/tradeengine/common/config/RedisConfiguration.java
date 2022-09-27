@@ -1,4 +1,4 @@
-package lo.sharon.tradeengine.common.queue.redis;
+package lo.sharon.tradeengine.common.config;
 
 import lo.sharon.tradeengine.dto.OrderRequest;
 import lo.sharon.tradeengine.model.Order;

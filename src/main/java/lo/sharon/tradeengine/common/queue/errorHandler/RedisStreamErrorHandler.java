@@ -1,4 +1,4 @@
-package lo.sharon.tradeengine.common.queue.redis;
+package lo.sharon.tradeengine.common.queue.errorHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ErrorHandler;
