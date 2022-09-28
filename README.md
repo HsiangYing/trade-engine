@@ -21,7 +21,10 @@ Your system will have multiple traders executing orders at the same time.
 
 ## 系統架構
 [如果看不清楚可以點這個連結](https://whimsical.com/trade-engine-system-architechure-55jZhRdv8FmJJ3oqFucy82)
+
+- 如果撮合系統想要 scale out, 究竟要如何確保 FIFO / 確保一個時間點只能比對一筆 ? 
 ![image](https://user-images.githubusercontent.com/104806006/192568924-06b373f5-bf82-4e62-8009-7708a77aaea0.png)
+
 
 
 
