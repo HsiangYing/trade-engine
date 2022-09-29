@@ -23,8 +23,8 @@ Your system will have multiple traders executing orders at the same time.
 [如果看不清楚可以點這個連結](https://whimsical.com/trade-engine-system-architechure-55jZhRdv8FmJJ3oqFucy82)
 
 - :star:很好奇:star: 如果撮合引擎(match engine)想要 scale out, 究竟要如何確保委託單比對順序是依照timestamp ?
-  - e.g.: 假設 match engine A consume timestamp 為  166441601**5269** 的委託單A, match engine B consume timestamp 為  166441601**4269** 的委託單B, 兩單同為市價單買單, 要如何確保 委託單B能比委託單A還要早被(與委託簿)比對?
-![image](https://user-images.githubusercontent.com/104806006/192568924-06b373f5-bf82-4e62-8009-7708a77aaea0.png)
+  - e.g.: 假設 match engine A consume timestamp 為  166441601**5269** 的委託單A, match engine B consume timestamp 為  166441601**4269** 的委託單B, 兩單同為市價單買單, 要如何確保委託單B能比委託單A還要早被(與委託簿)比對?
+![image](https://user-images.githubusercontent.com/104806006/192920611-ee57ed21-b21b-4aad-8960-3ed5d67a4753.png)
 
 
 
