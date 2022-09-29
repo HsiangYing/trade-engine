@@ -32,7 +32,7 @@ Your system will have multiple traders executing orders at the same time.
 ## 系統設計說明
 
 ### 操盤手提交委託單
-<img width="754" alt="image" src="https://user-images.githubusercontent.com/104806006/192535777-8dc9d09c-5fbc-4134-9dc8-aaf638681f02.png">
+![image](https://user-images.githubusercontent.com/104806006/192922364-deb27554-a07f-4152-a5bd-209f6b6386c1.png)
 
 1. 操盤手可以同時下單
    - springboot embedded tomcat 初始設定 server.tomcat.max-threads=200, 該設定可以決定最多可以同時處理多少個 http request
