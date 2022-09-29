@@ -44,7 +44,7 @@ Your system will have multiple traders executing orders at the same time.
 
 
 ### 系統撮合委託單
-![image](https://user-images.githubusercontent.com/104806006/192538333-c225d30f-1d4c-4abe-9810-b87ffc4b6396.png)
+![image](https://user-images.githubusercontent.com/104806006/192920988-93854228-4b2b-4edc-a0bc-86d8453dd5ae.png)
    
 1. 從 **redis stream** 消費委託單, 並比對該委託單與**委託簿**中是否有可以撮合的委託單
 2. 撮合邏輯
@@ -60,9 +60,9 @@ Your system will have multiple traders executing orders at the same time.
 3. issue: https://github.com/HsiangYing/trade-engine/issues/6
 
 ### 儲存撮合成功的委託單為一筆交易至DB
-![image](https://user-images.githubusercontent.com/104806006/192539110-550430f8-5ca9-425a-95b2-c2525ff6e15c.png)
+![image](https://user-images.githubusercontent.com/104806006/192921267-88faaf8b-4c1c-4273-b352-0640e193127f.png)
 
-1. 開一個 ThreadPool 負責將交易單儲存至 DB, 不與上述撮合引擎使用同一個 thread, 以提升效率
+1. 開一個 ThreadPool 負責將交易單儲存至 DB, 不與上述撮合引擎(match enfine)使用同一個 thread處理, 以提升效率
 2. 使用 ListenableFuture + callback 的方式將結果透過log 呈現, 不必等候 DB 儲存結果
 3. issue: https://github.com/HsiangYing/trade-engine/issues/9
 
